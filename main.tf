@@ -4,6 +4,7 @@ resource "aws_instance" "myec2" {
 
   tags = {
     Name = "MyEC2-2"
+    owner = "Ben Miles"
   }
 
 }
