@@ -3,7 +3,7 @@ resource "aws_instance" "myec2" {
   instance_type           = "t3.micro"
 
   tags = {
-    Name = "MyEC2"
+    Name = "MyEC2-2"
   }
 
 }
