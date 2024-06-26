@@ -1,6 +1,6 @@
 resource "aws_instance" "myec2" {
   ami                     = var.ami
-  instance_type           = "t2.micro"
+  instance_type           = "m5.xlarge"
 
   tags = {
     Name = "MyEC2-VCS"
