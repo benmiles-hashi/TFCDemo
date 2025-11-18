@@ -4,7 +4,7 @@ data "aws_vpc" "default" {
 resource "aws_security_group" "myec2_sg" {
   name        = "myec2-sg"
   description = "Security group for MyEC2 demo instance"
-  vpc_id      = aws_vpc.default.vpc_id
+  vpc_id      = data.aws_vpc.default.vpc_id
 
   ingress {
     description = "Allow HTTP"
