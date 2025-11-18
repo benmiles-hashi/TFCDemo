@@ -1,0 +1,26 @@
+import "tfplan/v2" as tfplan
+import "tfconfig/v2" as tfconfig
+import "tfrun"
+
+# Identify all SG resources in the *proposed plan*
+sg_resources = tfplan.filter_resources(resource_type="aws_security_group")
+
+# Rule 1: Fail if any ingress rule exposes SSH (22) to 0.0.0.0/0
+public_ssh_violation = rule {
+  any sg_resources as sg {
+    any sg.change.after.ingress as ingress_rule {
+      ingress_rule.from_port == 22 and
+      ingress_rule.to_port == 22 and
+      ingress_rule.protocol == "tcp" and (
+        # cidr_blocks exists and contains 0.0.0.0/0
+        (ingress_rule.cidr_blocks is not null and
+         ingress_rule.cidr_blocks contains "0.0.0.0/0")
+      )
+    }
+  }
+}
+
+# MAIN POLICY — block apply if violation is detected
+main = rule {
+  not public_ssh_violation
+}
