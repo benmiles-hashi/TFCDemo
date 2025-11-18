@@ -3,3 +3,6 @@
 variable "ami" {
     default = "ami-0277155c3f0ab2930"
 }
+variable "prefix" {
+  default = "bmiles-2sdf"
+}
