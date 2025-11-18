@@ -1,25 +1,15 @@
 check "sg_ssh_not_public" {
-  # Query the LIVE security group from AWS using the correct data source
-  data "aws_security_group" "live_myec2_sg" {
-    filter {
-      name   = "group-id"
-      values = [aws_security_group.myec2_sg.id]
-    }
+  data "aws_vpc_security_group_ingress_rule" "ssh_live" {
+    id = aws_vpc_security_group_ingress_rule.ssh_ingress.security_group_rule_id
   }
 
   assert {
-    condition = length([
-      for rule in data.aws_security_group.live_myec2_sg.ingress :
-      rule
-      if rule.from_port == 22 &&
-         rule.to_port   == 22 &&
-         rule.protocol  == "tcp" &&
-         contains(rule.cidr_blocks, "0.0.0.0/0")
-    ]) == 0
+    condition = data.aws_vpc_security_group_ingress_rule.ssh_live.cidr_ipv4 != "0.0.0.0/0"
 
-    error_message = "Security Group 'myec2-sg' exposes SSH (22) to 0.0.0.0/0."
+    error_message = "SSH is exposed to 0.0.0.0/0 on Security Group 'myec2-sg'."
   }
 }
+
 
 
 
