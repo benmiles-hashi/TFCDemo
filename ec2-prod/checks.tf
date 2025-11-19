@@ -1,6 +1,4 @@
-data "aws_s3_bucket_versioning" "live_versioning" {
-  bucket = aws_s3_bucket.mydemo_bucket.bucket
-}
+
 
 check "s3_bucket_encryption_enabled" {
 
@@ -31,8 +29,8 @@ check "s3_public_access_block_enabled" {
 }
 check "s3_versioning_enabled" {
   assert {
-    condition = data.aws_s3_bucket_versioning.live_versioning.status == "Enabled"
-
-    error_message = "S3 bucket versioning is NOT enabled in AWS."
+    condition = aws_s3_bucket_versioning.mydemo_bucket_versioning.versioning_configuration[0].status == "Enabled"
+    error_message = "S3 bucket versioning is not set to Enabled in the Terraform configuration."
   }
 }
+
