@@ -35,7 +35,7 @@ check "vm_running" {
     instance_id = aws_instance.myec2.id
   }
   assert {
-    condition = data.aws_instance.instance_state == "running"
+    condition = data.aws_instance.vm.instance_state == "running"
     error_message = "The Virtal machine is not running"
   }
 }
