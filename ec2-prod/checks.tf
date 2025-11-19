@@ -1,5 +1,9 @@
+data "aws_s3_bucket_versioning" "live_versioning" {
+  bucket = aws_s3_bucket.mydemo_bucket.bucket
+}
 
 check "s3_bucket_encryption_enabled" {
+
   assert {
     condition = length([
       for rule in aws_s3_bucket_server_side_encryption_configuration.mydemo_bucket_sse.rule :
@@ -8,5 +12,27 @@ check "s3_bucket_encryption_enabled" {
     ]) > 0
 
     error_message = "S3 bucket is not encrypted with AES256."
+  }
+}
+check "s3_public_access_block_enabled" {
+  data "aws_s3_bucket_acl" "live_acl" {
+    bucket = aws_s3_bucket.mydemo_bucket.bucket
+  }
+  assert {
+    condition = (
+      data.aws_s3_bucket_public_access_block.live_pab.block_public_acls &&
+      data.aws_s3_bucket_public_access_block.live_pab.block_public_policy &&
+      data.aws_s3_bucket_public_access_block.live_pab.ignore_public_acls &&
+      data.aws_s3_bucket_public_access_block.live_pab.restrict_public_buckets
+    )
+
+    error_message = "S3 bucket public access block is not fully enabled in AWS."
+  }
+}
+check "s3_versioning_enabled" {
+  assert {
+    condition = data.aws_s3_bucket_versioning.live_versioning.status == "Enabled"
+
+    error_message = "S3 bucket versioning is NOT enabled in AWS."
   }
 }
