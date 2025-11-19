@@ -30,4 +30,13 @@ check "s3_versioning_enabled" {
     error_message = "S3 bucket versioning is not set to Enabled in the Terraform configuration."
   }
 }
+check "vm_running" {
+  data "aws_instance" "vm" {
+    instance_id = aws_instance.myec2.id
+  }
+  assert {
+    condition = data.aws_instance.instance_state == "running"
+    error_message = "The Virtal machine is not running"
+  }
+}
 
