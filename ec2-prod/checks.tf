@@ -13,12 +13,15 @@ check "s3_bucket_encryption_enabled" {
   }
 }
 check "s3_public_access_block_enabled" {
+  data "aws_s3_bucket_public_access_block" "s3_acls" {
+    bucket = aws_s3_bucket.mydemo_bucket.id
+  }
   assert {
     condition = (
-      aws_s3_bucket_public_access_block.s3_acls.block_public_acls &&
-      aws_s3_bucket_public_access_block.s3_acls.block_public_policy &&
-      aws_s3_bucket_public_access_block.s3_acls.ignore_public_acls &&
-      aws_s3_bucket_public_access_block.s3_acls.restrict_public_buckets
+      data.aws_s3_bucket_public_access_block.s3_acls.block_public_acls &&
+      data.aws_s3_bucket_public_access_block.s3_acls.block_public_policy &&
+      data.aws_s3_bucket_public_access_block.s3_acls.ignore_public_acls &&
+      data.aws_s3_bucket_public_access_block.s3_acls.restrict_public_buckets
     )
 
     error_message = "S3 bucket public access block is not fully enabled in AWS."
