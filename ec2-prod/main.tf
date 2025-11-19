@@ -4,43 +4,37 @@ data "aws_vpc" "default" {
 resource "aws_security_group" "myec2_sg" {
   name        = "myec2-sg"
   description = "Security group for MyEC2 demo instance"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = aws_vpc.default.vpc_id
+
+  ingress {
+    description = "Allow HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow all outbound"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   tags = {
     Name  = "MyEC2-SG"
     Owner = "Ben Miles"
   }
 }
-
-resource "aws_vpc_security_group_ingress_rule" "http_ingress" {
-  security_group_id = aws_security_group.myec2_sg.id
-
-  description = "Allow HTTP"
-  cidr_ipv4   = "0.0.0.0/0"
-  from_port   = 80
-  to_port     = 80
-  ip_protocol = "tcp"
-}
-resource "aws_vpc_security_group_ingress_rule" "ssh_ingress" {
-  security_group_id = aws_security_group.myec2_sg.id
-
-  description = "Allow SSH"
-  cidr_ipv4   = "0.0.0.0/0"
-  from_port   = 22
-  to_port     = 22
-  ip_protocol = "tcp"
-}
-resource "aws_vpc_security_group_egress_rule" "all_outbound" {
-  security_group_id = aws_security_group.myec2_sg.id
-
-  description = "Allow all outbound"
-  cidr_ipv4   = "0.0.0.0/0"
-  from_port   = 0
-  to_port     = 0
-  ip_protocol = "-1"
-}
-
-
 
 resource "aws_instance" "myec2" {
   ami                    = var.ami
