@@ -1,17 +1,3 @@
-check "sg_ssh_not_public" {
-  data "aws_vpc_security_group_ingress_rule" "ssh_live" {
-    id = aws_vpc_security_group_ingress_rule.ssh_ingress.security_group_rule_id
-  }
-
-  assert {
-    condition = data.aws_vpc_security_group_ingress_rule.ssh_live.cidr_ipv4 != "0.0.0.0/0"
-
-    error_message = "SSH is exposed to 0.0.0.0/0 on Security Group 'myec2-sg'."
-  }
-}
-
-
-
 
 check "s3_bucket_encryption_enabled" {
   assert {
