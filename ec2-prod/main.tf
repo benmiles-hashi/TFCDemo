@@ -38,7 +38,7 @@ resource "aws_security_group" "myec2_sg" {
 
 resource "aws_instance" "myec2" {
   ami                    = var.ami
-  instance_type          = "t2.micro"
+  instance_type          = "t5.xlarge"
   vpc_security_group_ids = [aws_security_group.myec2_sg.id]
 
   tags = {
